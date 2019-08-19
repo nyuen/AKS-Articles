@@ -55,7 +55,7 @@ stages:
             displayName: 'terraform init'
             inputs:
               command: init
-              workingDirectory: $(Pipeline.Workspace)/{terraform_out}
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
               backendType: azurerm
               backendServiceArm: 'Azure SPN'
               backendAzureRmResourceGroupName: 'AKSTerraform-RG'
@@ -66,17 +66,17 @@ stages:
             displayName: 'terraform plan'
             inputs:
               command: plan
-              workingDirectory: $(Pipeline.Workspace)/{terraform_out}
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
               environmentServiceName: 'Azure SPN'
               secureVarsFile: 'aks_conf.tfvars'
-              commandOptions: '-out $(Pipeline.Workspace)/{terraform_out}/terraform_aks_out'
+              commandOptions: '-out $(Pipeline.Workspace)/terraform_out/terraform_aks_out'
               terraformVersion: 0.12.6
           - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
             displayName: 'terraform apply'
             inputs:
               command: apply
-              workingDirectory: $(Pipeline.Workspace)/{terraform_out}
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
               environmentServiceName: 'Azure SPN'
-              commandOptions: '$(Pipeline.Workspace)/{terraform_out}/terraform_aks_out'
+              commandOptions: '$(Pipeline.Workspace)/terraform_out/terraform_aks_out'
               terraformVersion: 0.12.6
             
