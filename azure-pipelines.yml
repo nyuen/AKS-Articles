@@ -12,6 +12,8 @@ stages:
   - job: Validate
     continueOnError: false
     steps:
+    - publish: 1-terraform
+      artifact: terraform_out
     - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
       displayName: 'Use Terraform v0.12.6'
       inputs:
@@ -32,8 +34,7 @@ stages:
       inputs:
         command: validate
         workingDirectory: 1-terraform
-    - publish: 1-terraform
-      artifact: terraform_out
+ 
 
 - stage: Deploy
   jobs:
@@ -54,7 +55,7 @@ stages:
             displayName: 'terraform init'
             inputs:
               command: init
-              workingDirectory: 1-terraform
+              workingDirectory: $(Pipeline.Workspace)/{terraform_out}
               backendType: azurerm
               backendServiceArm: 'Azure SPN'
               backendAzureRmResourceGroupName: 'AKSTerraform-RG'
@@ -65,17 +66,17 @@ stages:
             displayName: 'terraform plan'
             inputs:
               command: plan
-              workingDirectory: 1-terraform
+              workingDirectory: $(Pipeline.Workspace)/{terraform_out}
               environmentServiceName: 'Azure SPN'
               secureVarsFile: 'aks_conf.tfvars'
-              commandOptions: '-out terraform_aks_out'
+              commandOptions: '-out $(Pipeline.Workspace)/{terraform_out}/terraform_aks_out'
               terraformVersion: 0.12.6
           - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
             displayName: 'terraform apply'
             inputs:
               command: apply
-              workingDirectory: 1-terraform
+              workingDirectory: $(Pipeline.Workspace)/{terraform_out}
               environmentServiceName: 'Azure SPN'
-              commandOptions: 'terraform_aks_out'
+              commandOptions: '$(Pipeline.Workspace)/{terraform_out}/terraform_aks_out'
               terraformVersion: 0.12.6
             
