@@ -13,7 +13,7 @@ stages:
     continueOnError: false
     steps:
     - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-      displayName: 'Use Terraform v0.12.1'
+      displayName: 'Use Terraform v0.12.6'
       inputs:
         terraformVersion: 0.12.6
     - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
@@ -48,13 +48,24 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: terraform_out
+          # - download: current
+          #   artifact: terraform_out
+          - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+            displayName: 'terraform init'
+            inputs:
+              command: init
+              workingDirectory: 1-terraform
+              backendType: azurerm
+              backendServiceArm: 'Azure SPN'
+              backendAzureRmResourceGroupName: 'AKSTerraform-RG'
+              backendAzureRmStorageAccountName: 'nyuenterraformstate'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'demo.terraform.tfstate'
           - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
             displayName: 'terraform plan'
             inputs:
               command: plan
-              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              workingDirectory: 1-terraform
               environmentServiceName: 'Azure SPN'
               secureVarsFile: 'aks_conf.tfvars'
               commandOptions: '-out terraform_aks_out'
@@ -63,7 +74,7 @@ stages:
             displayName: 'terraform apply'
             inputs:
               command: apply
-              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              workingDirectory: 1-terraform
               environmentServiceName: 'Azure SPN'
               commandOptions: 'terraform_aks_out'
               terraformVersion: 0.12.6
