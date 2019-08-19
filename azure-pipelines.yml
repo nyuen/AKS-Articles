@@ -46,7 +46,7 @@ stages:
 - stage: Deploy
   jobs:
     # track deployments on the environment
-  - deployment: Deploy Terraform
+  - deployment: Deploy_Terraform
     pool:
       vmImage: 'ubuntu-latest'
     # creates an environment if it doesn’t exist
