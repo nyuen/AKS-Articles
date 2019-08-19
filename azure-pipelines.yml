@@ -15,7 +15,7 @@ stages:
     - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
       displayName: 'Use Terraform v0.12.1'
       inputs:
-        terraformVersion: 0.12.3
+        terraformVersion: 0.12.6
     - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
       displayName: 'terraform init'
       inputs:
@@ -65,4 +65,5 @@ stages:
               workingDirectory: $(Pipeline.Workspace)/terraform_out
               environmentServiceName: 'Azure SPN'
               commandOptions: 'terraform_aks_out'
+              terraformVersion: 0.12.6
             
