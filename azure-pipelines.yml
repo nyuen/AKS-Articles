@@ -39,18 +39,30 @@ stages:
         workingDirectory: 1-terraform
         environmentServiceName: 'Azure SPN'
         secureVarsFile: 'aks_conf.tfvars'
+        commandOptions: '-out $(Build.ArtifactStagingDirectory)/terraform_aks_out'
+    - publish: $(Build.ArtifactStagingDirectory)
+      artifact: terraform_out
 
 - stage: Deploy
   jobs:
     # track deployments on the environment
-  - deployment: DeployWeb
+  - deployment: Deploy Terraform
     pool:
       vmImage: 'ubuntu-latest'
     # creates an environment if it doesn’t exist
-    environment: 'smarthotel-dev'
+    environment: 'DEV'
     strategy:
       # default deployment strategy
       runOnce:
         deploy:
           steps:
-          - script: echo my first deployment
+          - download: current
+            artifact: terraform_out
+          - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+            displayName: 'terraform plan'
+            inputs:
+              command: apply
+              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              environmentServiceName: 'Azure SPN'
+              commandOptions: 'terraform_aks_out'
+            
