@@ -38,6 +38,7 @@ stages:
         command: plan
         workingDirectory: 1-terraform
         environmentServiceName: 'Azure SPN'
+        commandOptions: '-var-file=aks_conf.tfvars'
 
 - stage: Deploy
   jobs:
