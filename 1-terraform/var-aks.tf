@@ -1,13 +1,3 @@
-# Variable Service Principal clientID
-variable "spn_client_id" {
-  type = string
-}
-
-# Variable Service Principal clientSecret
-variable "spn_client_secret" {
-  type = string
-}
-
 #KeyVault Resource Group and KeyVaultName
 variable "keyvault_rg" {
   type    = string
