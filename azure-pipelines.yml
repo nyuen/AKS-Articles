@@ -32,16 +32,6 @@ stages:
       inputs:
         command: validate
         workingDirectory: 1-terraform
-    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
-      displayName: 'terraform plan'
-      inputs:
-        command: plan
-        workingDirectory: 1-terraform
-        environmentServiceName: 'Azure SPN'
-        secureVarsFile: 'aks_conf.tfvars'
-        commandOptions: '-out $(Build.ArtifactStagingDirectory)/terraform_aks_out'
-    - publish: $(Build.ArtifactStagingDirectory)
-      artifact: terraform_out
 
 - stage: Deploy
   jobs:
@@ -56,13 +46,19 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: terraform_out
+          - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+            displayName: 'terraform plan'
+            inputs:
+              command: plan
+              workingDirectory: 1-terraform
+              environmentServiceName: 'Azure SPN'
+              secureVarsFile: 'aks_conf.tfvars'
+              commandOptions: '-out terraform_aks_out'
           - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
             displayName: 'terraform plan'
             inputs:
               command: apply
-              workingDirectory: $(Pipeline.Workspace)/terraform_out
+              workingDirectory: 1-terraform
               environmentServiceName: 'Azure SPN'
               commandOptions: 'terraform_aks_out'
               terraformVersion: 0.12.6
