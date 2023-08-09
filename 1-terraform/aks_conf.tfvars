@@ -1,0 +1,6 @@
+azure_region = "EASTUS2"
+kubernetes_version = "1.26.3"
+resource_group = "AksCluster-RG"
+acr_name = "myacr553"
+keyvault_rg = "AksTerraform-RG"
+keyvault_name = "mykv0553"
